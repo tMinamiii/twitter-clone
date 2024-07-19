@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 'rootpass'
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "13306:3306"
+    command: mysqld --innodb_use_native_aio=0
+    networks:
+      - backend
+  testdb:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 'rootpass'
+    volumes:
+      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "23306:3306"
+    command: mysqld --innodb_use_native_aio=0
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
